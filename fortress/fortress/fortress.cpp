@@ -9,18 +9,11 @@
 
 using namespace std;
 
-struct node;
-typedef shared_ptr<node> Node;
-
 struct node
 {
-public:
-	node(int _x, int _y, int _r) : x(_x), y(_y), r(_r) {}
-
-	bool contain(Node& n) const
+	bool contain(node& n) const
 	{
-		int d = (x - n->x)*(x - n->x) + (y - n->y)*(y - n->y);
-		return d <= (r - n->r)*(r - n->r);
+		return pow(x - n.x, 2) + pow(y - n.y, 2) < pow(r - n.r, 2);
 	}
 
 	int maxDist(vector<int>& list) const
@@ -38,14 +31,14 @@ public:
 		return dist[0];
 	}
 
-	void addChild(Node n)
+	void addChild(node* n)
 	{
 		vector<int> inside;
-		for (int i = 0; i < child.size(); i++)
+		for (auto &i: child)
 		{
-			if (child[i]->contain(n))
+			if (i->contain(*n))
 			{
-				child[i]->addChild(n);
+				i->addChild(n);
 				return;
 			}
 		}
@@ -53,7 +46,7 @@ public:
 		vector<int> cont;
 		for (int i = 0; i < child.size(); i++)
 		{
-			if (n->contain(child[i]))
+			if (n->contain(*child[i]))
 				cont.push_back(i);
 		}
 
@@ -68,42 +61,17 @@ public:
 			return;
 		}
 
-		child.push_back(Node(n));
+		child.push_back(n);
 	}
 
 	int x, y, r;
-	vector<Node> child;
-};
-
-struct tree
-{
-	void addChild(node* n)
-	{
-		if (root != nullptr)
-			root->addChild(Node(n));
-		else
-			root.reset(n);
-	}
-
-	int maxDist()
-	{
-		vector<int> list;
-		int dist = root->maxDist(list);
-		sort(list.begin(), list.end(), greater<int>());
-
-		if (list.size() > 0)
-			dist = max(dist, list[0]);
-
-		return dist;
-	}
-
-	Node root;
+	vector<node*> child;
 };
 
 int main()
 {
-	int n;
-#if 1
+	int n, c;
+#if 0
 	istream& in = cin;
 #else
 	ifstream f;
@@ -114,20 +82,24 @@ int main()
 
 	while (n--)
 	{
-		int c;
 		in >> c;
 
-		tree t;
-		
-		for (int i = 0; i < c; i++)
-		{
-			int x, y, r;
-			in >> x >> y >> r;
+		vector<node> nodes(c);
+		for (auto &e : nodes)
+			in >> e.x >> e.y >> e.r;
 
-			t.addChild(new node(x, y, r));
-		}
+		node* root = &nodes[0];
+		for (int i = 1; i < nodes.size(); i++)
+			root->addChild(&nodes[i]);
 
-		cout << t.maxDist() << endl;
+		vector<int> list;
+		int dist = root->maxDist(list);
+		sort(list.begin(), list.end(), greater<int>());
+
+		if (list.size() > 0)
+			dist = max(dist, list[0]);
+
+		cout << dist << endl;
 	}
 
 	return 0;
