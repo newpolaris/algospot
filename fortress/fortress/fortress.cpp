@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <iterator>
 #include <fstream>
 #include <vector>
@@ -6,29 +6,46 @@
 #include <algorithm>
 #include <functional>
 #include <map>
+#include <unordered_map>
 
 using namespace std;
 
 struct node
 {
+	node() { x = y = r = d = 0; }
 	bool contain(node& n) const
 	{
 		return pow(x - n.x, 2) + pow(y - n.y, 2) < pow(r - n.r, 2);
 	}
 
-	int maxDist(vector<int>& list) const
+	int depth() 
 	{
-		if (child.size() == 0) return 0;
+		if (d == 0)
+			for (auto &i : child)
+				d = max(d, i->depth()+1);
 
-		vector<int> dist;
-		for (int i = 0; i < child.size(); i++)
-			dist.push_back(child[i]->maxDist(list) + 1);
+		return d;
+	}
 
-		sort(dist.begin(), dist.end(), greater<int>());
-		if (dist.size() > 1)
-			list.push_back(dist[0] + dist[1]);
-		
-		return dist[0];
+	int dist() 
+	{
+		int m1 = 0, m2 = 0;
+		for (auto &i : child)
+		{
+			m2 = max(m2, i->depth() + 1);
+			if (m2 > m1) 
+				swap(m1, m2);
+		}
+		return m1 + m2;
+	}
+
+	int maxdist()
+	{
+		int m = dist();
+		for (auto &i : child)
+			m = max(m, i->maxdist());
+		return m;
+			
 	}
 
 	void addChild(node* n)
@@ -43,28 +60,10 @@ struct node
 			}
 		}
 
-		vector<int> cont;
-		for (int i = 0; i < child.size(); i++)
-		{
-			if (n->contain(*child[i]))
-				cont.push_back(i);
-		}
-
-		if (cont.size() != 0)
-		{
-			for (int i = 0; i < cont.size(); i++)
-				n->addChild(child[i]);
-
-			for (int i = 0; i < cont.size(); i++)
-				child.erase(child.begin() + cont[i]);
-
-			return;
-		}
-
 		child.push_back(n);
 	}
 
-	int x, y, r;
+	int x, y, r, d;
 	vector<node*> child;
 };
 
@@ -88,18 +87,15 @@ int main()
 		for (auto &e : nodes)
 			in >> e.x >> e.y >> e.r;
 
+		sort(nodes.begin(), nodes.end(), 
+			[](const node& a, const node& b)
+				{ return a.r > b.r; });
+
 		node* root = &nodes[0];
 		for (int i = 1; i < nodes.size(); i++)
 			root->addChild(&nodes[i]);
 
-		vector<int> list;
-		int dist = root->maxDist(list);
-		sort(list.begin(), list.end(), greater<int>());
-
-		if (list.size() > 0)
-			dist = max(dist, list[0]);
-
-		cout << dist << endl;
+		cout << root->maxdist() << endl;
 	}
 
 	return 0;
