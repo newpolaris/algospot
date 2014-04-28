@@ -41,44 +41,22 @@ int main()
 		unordered_map<int, int> map;
 
 		int count = 0;
-		int hold = 0;
 
-		int sIdx = 0;
-		int eIdx = 0;
-
-		while (eIdx < n)
+		for (int sI = 0; sI < n; sI++)
 		{
-			if (map[c[eIdx]]++ == 0)
-				hold++;
-
-			while (hold > k && sIdx <= eIdx)
+			map.clear();
+			int numType = 0;
+			for (int el = sI; el < n; el++)
 			{
-				if (--map[c[sIdx]] == 0)
-					hold--;
-				sIdx++;
-			}
+				int num = c[el];
+				if (map[num]++ == 0)
+					numType++;
 
-			if (hold == k)
-			{
-				int cIdx = sIdx;
-
-				unordered_map<int, int> cmap;
-				while (cIdx <= eIdx)
-				{
+				if (numType == k)
 					count++;
-					if (cmap[c[cIdx]] == 0)
-						cmap[c[cIdx]] = map[c[cIdx]];
-
-					if (--cmap[c[cIdx]] == 0)
-					{
-						cmap[c[cIdx]] = -1;
-						break;
-					}
-					cIdx++;
-				}
+				else if (numType > k)
+					break;
 			}
-				
-			eIdx++;
 		}
 
 		cout << count << endl;
