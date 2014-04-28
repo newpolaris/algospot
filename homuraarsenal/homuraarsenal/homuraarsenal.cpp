@@ -6,37 +6,31 @@
 
 using namespace std;
 
-int main()
+inline void input(int& i)
 {
 #if _DEBUG
-	ifstream file;
-	file.open("homuraarsenal.txt");
-	istream& in(file);
+	static ifstream file("homuraarsenal.txt");
+	static istream& in = file;
+	in >> i;
+#else
+	scanf("%d", &i);
 #endif
+}
 
+int main()
+{
 	int r, n, k;
 
-#if _DEBUG
-	in >> r;
-#else
-	scanf("%d", &r);
-#endif
+	input(r);
 
 	while (r--)
 	{
-#if _DEBUG
-		 in >> n >> k;
-#else
-		scanf("%d %d", &n, &k);
-#endif
+		input(n);
+		input(k);
 
 		vector<int> c(n);
 		for (auto &e: c)
-#if _DEBUG
-			in >> e;
-#else
-			scanf("%d", &e);
-#endif
+			input(e);
 
 		unordered_map<int, int> map;
 
