@@ -8,3 +8,6 @@
 *.swp
 *.lastbuildstate
 *.opensdf
+
+/*.suo
+/.gitattributes
