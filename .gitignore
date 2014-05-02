@@ -11,3 +11,10 @@
 
 /*.suo
 /.gitattributes
+/algospot/Debug/*.obj
+
+/algospot/Debug/*.log
+
+/Debug/*.exe
+
+/Debug/*.ilk
