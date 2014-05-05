@@ -2,40 +2,31 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <set>
+#include <algorithm>
 
 using namespace std;
 
-#ifdef _DEBUG
-ifstream fin("../dictionary/dictionary.txt");
-istream& in = fin;
-#else
 istream& in = cin;
-#endif
 
 bool isCycle;
 
 vector<int> solution;
 vector<bool> used;
-set<int> stack;
+vector<bool> S;
 vector<vector<int>> aj;
 
 void dfs(int v)
 {
-	used[v] = true;
-	stack.insert(v);
+	used[v] = S[v] = 1;
 	for (auto &e : aj[v])
 	{
 		if (!used[e]) dfs(e);
-		else if (stack.find(e) != stack.end())
-		{
-			isCycle = true;
-			break;
-		}
+		else if (S[e] == 1)
+			isCycle = 1;
 	}
 	
 	solution.push_back(v);
-	stack.erase(v);
+	S[v] = 0;
 }
 
 int main()
@@ -62,40 +53,34 @@ int main()
 			string& p = str[i-1];
 			string& c = str[i];
 
-			int idx = 0;
-			while (true)
+			int Len = min(p.size(), c.size());
+			for (int l = 0; l < Len; l++)
 			{
-				if (p.size() <= idx || c.size() <= idx) break;
-
-				int P = p[idx] - 'a';
-				int C = c[idx] - 'a';
+				int P = p[l] - 'a';
+				int C = c[l] - 'a';
 
 				if (P != C)
 				{
 					aj[P].push_back(C);
 					break;
 				}
-				idx++;
 			}
 		}
 
 		used = vector<bool>(26, false);
+		S = vector<bool>(26, false);
 
 		for (int i = 0; i < 26; i++)
-		{
 			if (!used[i]) dfs(i);
-			if (isCycle) break;
-		}
 
 		if (isCycle)
-		{
 			cout << "INVALID HYPOTHESIS" << endl;
-			continue;
+		else
+		{
+			for (auto e = solution.rbegin(); e != solution.rend(); ++e)
+				cout << (char)(*e + 'a');
+			cout << endl;
 		}
-
-		for (auto e = solution.rbegin(); e != solution.rend(); ++e)
-			cout << (char)(*e + 'a');
-		cout << endl;
 	}
 
 	return 0;
