@@ -18,3 +18,13 @@
 /Debug/*.exe
 
 /Debug/*.ilk
+
+/algospot/Release/*.obj
+
+/algospot/Release/*.log
+
+/algospot/*.user
+
+/dictionary/*.TMP
+
+/Release/*.exe
