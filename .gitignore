@@ -28,3 +28,12 @@
 /dictionary/*.TMP
 
 /Release/*.exe
+
+*.exe
+*.ilk
+
+*.log
+
+*.suo
+
+*.obj
